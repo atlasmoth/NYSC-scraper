@@ -2,17 +2,28 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const nodemailer = require("nodemailer");
 const path = require("path");
+require("dotenv").config({ path: path.resolve(process.cwd(), ".env") });
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
+
+const app = express();
+
+app.use(helmet());
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const EMAIL = process.env.EMAIL;
 const PASSWORD = process.env.PASSWORD;
 
 const transporter = nodemailer.createTransport({
-  host: "[insert host]",
-  port: 000,
+  host: process.env.EMAIL_HOST,
+  port: process.env.MAIL_PORT,
   secure: true,
   auth: {
-    user: "",
-    pass: "",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -60,7 +71,7 @@ async function Scrape(password = "", email = "") {
     });
     await browser.close();
     const info = await transporter.sendMail({
-      from: '"NYSC BOT',
+      from: "NYSC BOT",
       to: email,
       subject: "NYSC metrics",
       text: "Your NYSC docs",
@@ -83,4 +94,11 @@ async function Scrape(password = "", email = "") {
   }
 }
 
-Scrape(PASSWORD, EMAIL);
+app.all("/*", async (req, res) => {
+  res.send({ success: true });
+  await Scrape(PASSWORD, EMAIL);
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, (e) => console.log(e || `Listening on ${PORT}`));

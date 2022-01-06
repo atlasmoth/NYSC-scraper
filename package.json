@@ -1,5 +1,19 @@
 {
+  "name": "nysc-scraper",
+  "version": "1.0.0",
+  "description": "REST api for nysc scraper",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server"
+  },
+  "author": "Chukwuebuka Osuji",
+  "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "helmet": "^5.0.1",
     "nodemailer": "^6.7.0",
     "puppeteer": "^11.0.0"
   }
